@@ -428,6 +428,9 @@
   .signoff-stage.locked{background:#EDEDED; opacity:0.85;}
   .signoff-stage.locked h3{color:var(--muted);}
   .signoff-stage.locked input, .signoff-stage.locked select{background:#E4E4E4; color:#555; cursor:not-allowed;}
+  .card.locked-section .card-body{background:#EDEDED; opacity:0.85;}
+  .card.locked-section input, .card.locked-section select, .card.locked-section textarea{background:#E4E4E4; color:#555; cursor:not-allowed;}
+  .stage-lock-note{font-size:11px; font-style:italic; color:var(--muted); margin-top:6px; padding:8px; background:#fff; border-radius:4px;}
   .signoff-lock-note{font-size:10.5px; font-style:italic; color:var(--muted); margin-top:6px;}
   .carryover-banner{
     background:var(--lgrey);
@@ -946,6 +949,7 @@
           </div>
           <div class="signoff-stage" id="stageBoxFinal">
             <h3>Final Decision</h3>
+            <div class="stage-lock-note" id="stageBoxFinalLockNote" style="display:none;">Locked until the Final Decision stage &mdash; complete Second Interview first.</div>
             <div class="field" style="margin-bottom:10px;">
               <label>Final Approval</label>
               <select name="rec_final" id="rec_final" onchange="updateFinalDecisionCheck()">
@@ -961,9 +965,10 @@
       </div>
     </section>
 
-    <section class="card">
+    <section class="card" id="finalReviewCard">
       <div class="card-head">Final Decision &mdash; Manager Review &amp; Personal Score</div>
       <div class="card-body">
+        <div class="stage-lock-note" id="finalReviewLockNote" style="display:none;">Locked until the Final Decision stage &mdash; complete Second Interview first. This section becomes editable once the Second Interview submission triggers the handoff to Final Decision.</div>
         <p class="note" style="margin-top:0;">This is the final decision maker's own independent read on the candidate &mdash; based on either a follow-up phone call, a third in-person conversation, or a straight review of everything submitted so far. It is separate from the Section A weighted score above; it exists specifically to catch cases where the numbers say one thing but a direct conversation reveals something the earlier stages didn't.</p>
 
         <div class="field-grid" style="grid-template-columns:1fr;max-width:340px;">
@@ -997,7 +1002,7 @@
         <div class="field-grid" style="grid-template-columns:1fr;max-width:320px;">
           <div class="field">
             <label for="stageSubmitted">Which stage are you submitting?</label>
-            <select id="stageSubmitted">
+            <select id="stageSubmitted" onchange="updateStageGating()">
               <option value="First Interview">First Interview</option>
               <option value="Second Interview">Second Interview</option>
               <option value="Final Decision">Final Decision</option>
@@ -1038,9 +1043,9 @@
         <p style="font-weight:bold; margin-bottom:4px;">Workflow</p>
         <ol class="steps">
           <li>Complete Candidate Information during or right after the call, including Position Applied For &mdash; this determines which scoring track (Sales Manager or Debt Counselor) the candidate's file uses once it reaches the Manager's In-Person Interview.</li>
-          <li>Ask Question 1 and rate all five categories from 1 to 5. Each category shows what a low, middle, and high score actually sounds like &mdash; rate what the candidate said, not what you think they meant. The average only reflects the categories you've rated so far, and stays flagged as "not final" until all five are scored.</li>
-          <li>Ask Question 2 and Question 3. Click a listen-for item to expand a quick reference showing what a strong versus weak answer sounds like, plus a suggested follow-up question if the answer sounded weak or hedged. Check the box only for items you actually heard &mdash; unchecked doesn't mean bad, it just wasn't demonstrated.</li>
-          <li>The Phone Screen Score Summary near the bottom is a suggested read based on your Q1 rating and how many Q2/Q3 items were checked. It is not a rule and does not decide anything &mdash; the Recommendation dropdown below it is your call, informed by your notes.</li>
+          <li>Ask Question 1, 2, and 3 in order, using the listen-for notes and reference cards under each to guide what you're listening for. Check off Q2/Q3 listen-for items you actually heard, and jot down notes under each question &mdash; these are reference and documentation, not scored on their own.</li>
+          <li>Rate the candidate on the Phone Screening Scoring Matrix at the bottom &mdash; five weighted criteria, scored 1 to 4 each, same structure as the Manager's In-Person Interview's own scoring matrix. Call Greeting Execution and Customer Service Aptitude can be pre-filled using the linked tier selector under Questions 2 and 3, but you can always override the matrix directly.</li>
+          <li>The weighted total and decision band update live as you score. This is the real, single number for this stage &mdash; not a suggestion layered on top of something else.</li>
           <li>Set the Recommendation, sign, and date, then click Submit to Database.</li>
         </ol>
 
@@ -1050,9 +1055,9 @@
         <p style="font-weight:bold; margin:12px 0 4px;">Key Terms</p>
         <table class="matrix" style="font-size:11.8px;">
           <tbody>
-            <tr><td class="crit-name" style="width:22%;">Q1 Average</td><td>The average of the 1&ndash;5 ratings across all five Question 1 categories. Only counts categories you've actually rated &mdash; shown with a warning until all five are scored.</td></tr>
-            <tr><td class="crit-name">Q2 / Q3 Observed</td><td>How many of the listen-for items you checked as actually demonstrated on the call, out of the total for that question.</td></tr>
-            <tr><td class="crit-name">Phone Screen Score Summary</td><td>A combined, plain-language read (Strong / Solid / Mixed / Weak) based on Q1's average and the Q2/Q3 observed counts. It's a suggestion to inform your judgment, not a gate &mdash; you can recommend Advance even if it reads Mixed, or Hold even if it reads Strong, based on what you actually heard.</td></tr>
+            <tr><td class="crit-name" style="width:22%;">Phone Screening Scoring Matrix</td><td>The single, real weighted score for this stage &mdash; five criteria, each scored 1&ndash;4 and weighted, summed into a total out of 48. This is what determines the decision band; nothing else on this form feeds a number.</td></tr>
+            <tr><td class="crit-name">Linked Rating</td><td>The Weak / Acceptable / Strong selector under Questions 2 and 3. Rating it and clicking "Apply suggestion" fills in that criterion on the matrix for you &mdash; Weak sets a 1, Acceptable a 3, Strong a 4. You can still change it directly on the matrix afterward.</td></tr>
+            <tr><td class="crit-name">Q2 / Q3 Observed</td><td>How many of the listen-for items you checked as actually demonstrated on the call. This is documentation for your notes, separate from the linked tier rating used for scoring.</td></tr>
             <tr><td class="crit-name">Tracking Number</td><td>Assigned automatically the moment this form loads. It stays with the candidate's file through every later stage, so their record is searchable end to end.</td></tr>
           </tbody>
         </table>
@@ -1097,12 +1102,8 @@
       <div class="card-head">Question 1 &mdash; Introduction &amp; Interest</div>
       <div class="card-body">
         <p style="font-weight:bold; margin-top:0;">&ldquo;Can you tell me a little about yourself and what interested you in applying for this position?&rdquo;</p>
-        <p class="note" style="margin-top:0;">Listen for: confidence, clear communication, professional tone, enthusiasm for the opportunity.</p>
-        <table class="matrix" id="q1RatingTable"></table>
-        <div class="score-summary" style="margin-top:14px;">
-          <div class="score-box"><div class="num" id="q1Avg">&mdash;</div><div class="lbl">Q1 Average (of 5)</div></div>
-        </div>
-        <textarea class="qb-notes" id="q1Notes" rows="2" placeholder="Notes on the candidate's answer" style="margin-top:12px;"></textarea>
+        <p class="note" style="margin-top:0;">Listen for: confidence, clear communication, professional tone, enthusiasm for the opportunity. Score this in the Phone Screening Scoring Matrix below under Professionalism &amp; Communication and Confidence &amp; Poise.</p>
+        <textarea class="qb-notes" id="q1Notes" rows="2" placeholder="Notes on the candidate's answer"></textarea>
       </div>
     </section>
 
@@ -1113,6 +1114,16 @@
         <p class="note" style="margin-top:0;"><strong>Strong example:</strong> &ldquo;Good morning, thank you for calling NCCB. My name is [Name]. How may I assist you today?&rdquo;</p>
         <div class="dq-list" id="q2Checklist"></div>
         <textarea class="qb-notes" id="q2Notes" rows="2" placeholder="What did the candidate actually say?" style="margin-top:10px;"></textarea>
+        <div style="margin-top:10px; padding-top:10px; border-top:1px dashed var(--border);">
+          <p style="font-size:11px; font-weight:bold; margin:0 0 6px; color:var(--navy-dark);">Linked to the Scoring Matrix below &mdash; Call Greeting Execution. Rate the greeting's overall quality:</p>
+          <div class="score-options" style="flex-direction:row; gap:12px;">
+            <label><input type="radio" name="q2Tier" value="weak">Weak</label>
+            <label><input type="radio" name="q2Tier" value="accept">Acceptable</label>
+            <label><input type="radio" name="q2Tier" value="strong">Strong</label>
+          </div>
+          <button type="button" onclick="applyPhoneLinkedScore('q2Tier', 'greeting')" style="margin-top:8px; background:var(--navy); color:#fff; border:none; padding:6px 12px; border-radius:4px; font-size:11.5px; cursor:pointer;">Apply suggestion to Scoring Matrix</button>
+          <span id="q2ApplyMsg" style="font-size:11px; color:var(--green); margin-left:8px;"></span>
+        </div>
       </div>
     </section>
 
@@ -1122,19 +1133,32 @@
         <p style="font-weight:bold; margin-top:0;">&ldquo;Customer service is very important in this role. Can you describe a time you helped someone or handled a difficult situation?&rdquo;</p>
         <div class="dq-list" id="q3Checklist"></div>
         <textarea class="qb-notes" id="q3Notes" rows="2" placeholder="Summarize the candidate's example" style="margin-top:10px;"></textarea>
+        <div style="margin-top:10px; padding-top:10px; border-top:1px dashed var(--border);">
+          <p style="font-size:11px; font-weight:bold; margin:0 0 6px; color:var(--navy-dark);">Linked to the Scoring Matrix below &mdash; Customer Service Aptitude. Rate the example's overall quality:</p>
+          <div class="score-options" style="flex-direction:row; gap:12px;">
+            <label><input type="radio" name="q3Tier" value="weak">Weak</label>
+            <label><input type="radio" name="q3Tier" value="accept">Acceptable</label>
+            <label><input type="radio" name="q3Tier" value="strong">Strong</label>
+          </div>
+          <button type="button" onclick="applyPhoneLinkedScore('q3Tier', 'cust_service')" style="margin-top:8px; background:var(--navy); color:#fff; border:none; padding:6px 12px; border-radius:4px; font-size:11.5px; cursor:pointer;">Apply suggestion to Scoring Matrix</button>
+          <span id="q3ApplyMsg" style="font-size:11px; color:var(--green); margin-left:8px;"></span>
+        </div>
       </div>
     </section>
 
     <section class="card">
-      <div class="card-head">Phone Screen Score Summary</div>
+      <div class="card-head">Phone Screening Scoring Matrix</div>
       <div class="card-body">
-        <p class="note" style="margin-top:0;">This is a suggested read based on Q1's rating average plus how many Q2/Q3 reference items were observed &mdash; it does not decide anything for you. Use it alongside your notes, not instead of them.</p>
-        <div class="score-summary">
-          <div class="score-box"><div class="num" id="phoneScoreQ1">&mdash;</div><div class="lbl">Q1 Average</div></div>
-          <div class="score-box"><div class="num" id="phoneScoreQ2">&mdash;</div><div class="lbl">Q2 Observed</div></div>
-          <div class="score-box"><div class="num" id="phoneScoreQ3">&mdash;</div><div class="lbl">Q3 Observed</div></div>
+        <p class="note" style="margin-top:0;">This is the single, real score for the phone screen &mdash; weighted the same way Section A works on the Manager's In-Person Interview. Score each criterion 1&ndash;4 based on everything you heard across all three questions. Call Greeting Execution and Customer Service Aptitude can be pre-filled from the linked ratings in Questions 2 and 3 above, but you can always override them here.</p>
+        <table class="matrix" id="phoneMatrixTable"></table>
+        <div class="score-summary" style="margin-top:14px;">
+          <div class="score-box"><div class="num" id="phoneRawTotal">0</div><div class="lbl">Raw Points (of 20)</div></div>
+          <div class="score-box"><div class="num" id="phoneWeightedTotal">0</div><div class="lbl">Weighted Score (of <span id="phoneMaxTotal">48</span>)</div></div>
+          <div class="score-box"><div class="num" id="phoneScoredCount">0 / 5</div><div class="lbl">Criteria Scored</div></div>
         </div>
-        <div class="band-banner" id="phoneScoreBanner">Rate Q1 and check off Q2/Q3 items to see a suggested read.</div>
+        <div class="band-banner" id="phoneMatrixBanner">Score all five criteria to generate a suggested read.</div>
+        <div class="bands" id="phoneBandsRef"></div>
+        <p class="note" style="margin-top:10px;">Minimum threshold: <strong>22 or higher</strong> to avoid a Do Not Hire read; <strong>33 or higher</strong> to be considered Strong.</p>
       </div>
     </section>
 
@@ -1400,6 +1424,7 @@ function loadFromURLParams(){
 
   const stageSel = document.getElementById("stageSubmitted");
   if(stageSel) stageSel.value = nextStage;
+  updateStageGating();
 }
 
 function lockStageBox(id, noteText){
@@ -2108,8 +2133,30 @@ function goHome(){
 }
 
 /* ============================================================
-   FINAL DECISION — MANAGER REVIEW & PERSONAL SCORE
+   STAGE GATING — Final Decision box & Manager Review section stay
+   locked until the form has actually reached the Final Decision stage
    ============================================================ */
+function updateStageGating(){
+  const stageSel = document.getElementById("stageSubmitted");
+  const finalReady = stageSel && stageSel.value === "Final Decision";
+  setReversibleLock("stageBoxFinal", "stageBoxFinalLockNote", !finalReady);
+  setReversibleLock("finalReviewCard", "finalReviewLockNote", !finalReady);
+}
+
+function setReversibleLock(sectionId, noteId, shouldLock){
+  const section = document.getElementById(sectionId);
+  const note = document.getElementById(noteId);
+  if(!section) return;
+  section.classList.toggle("locked", shouldLock);
+  section.classList.toggle("locked-section", shouldLock);
+  section.querySelectorAll("input, select, textarea").forEach(el => {
+    // Don't touch the stageSubmitted selector itself if it happens to be nested.
+    if(el.id !== "stageSubmitted") el.disabled = shouldLock;
+  });
+  if(note) note.style.display = shouldLock ? "block" : "none";
+}
+
+
 function renderFinalScoreTable(){
   const table = document.getElementById("finalScoreTable");
   if(!table) return;
@@ -2241,11 +2288,12 @@ function openRecordDetail(index){
     html += row("Source", rec["Source"]);
     html += row("Call Date", rec["Call Date"]);
     html += row("Interviewer", rec["Interviewer"]);
-    html += row("Q1 Average", rec["Q1 Average"] + " / 5");
+    html += row("Weighted Total", `${rec["Weighted Total"] || "n/a"} / ${rec["Max"] || "n/a"}`);
+    html += row("Decision Band", rec["Decision Band"]);
     html += row("Recommendation", rec["Recommendation"]);
     html += row("Signed By", rec["Signed By"]);
     html += row("Sign Date", rec["Sign Date"]);
-    html += `<div class="detail-full">` + row("Q1 Ratings", rec["Q1 Ratings"]) + `</div>`;
+    html += `<div class="detail-full">` + row("Matrix Ratings", rec["Matrix Ratings"]) + `</div>`;
     html += `<div class="detail-full">` + row("Q1 Notes", rec["Q1 Notes"]) + `</div>`;
     html += `<div class="detail-full">` + row("Q2 Observed", rec["Q2 Observed"]) + `</div>`;
     html += `<div class="detail-full">` + row("Q2 Notes", rec["Q2 Notes"]) + `</div>`;
@@ -2285,14 +2333,6 @@ function openRecordDetail(index){
 function closeRecordDetail(){
   document.getElementById("recordDetailCard").style.display = "none";
 }
-const Q1_CATEGORIES = [
-  { label: "Professionalism", low: "Casual, rambling, or unprepared", mid: "Reasonably organized with minor missteps", high: "Polished, clear structure, no filler" },
-  { label: "Communication", low: "Hard to follow or unclear", mid: "Understandable, some hesitation", high: "Clear and concise throughout" },
-  { label: "Confidence", low: "Hesitant, uncertain, apologetic tone", mid: "Generally steady with occasional wavering", high: "Assured and direct, no hedging" },
-  { label: "Friendliness", low: "Flat or distant tone", mid: "Polite but reserved", high: "Warm, engaging, personable" },
-  { label: "Overall Impression", low: "Would not recommend advancing", mid: "Solid but unremarkable", high: "Stands out as a clear advance candidate" }
-];
-
 const Q2_LISTEN_FOR = [
   { label: "Friendly and welcoming tone", strong: "Warm, upbeat tone from the first word", weak: "Flat, monotone, or sounds scripted", rebuttal: "Ask them to try the greeting again like they're genuinely glad to help." },
   { label: "Professional greeting", strong: "States the company name and offers to help clearly", weak: "Skips the company name or sounds unsure of the format", rebuttal: "Ask: \u2018What if the caller doesn't give their name right away \u2014 how would you continue?\u2019" },
@@ -2308,35 +2348,97 @@ const Q3_LISTEN_FOR = [
   { label: "Ability to remain professional under pressure", strong: "Describes actively managing their own tone/emotion under stress", weak: "No mention of managing their own reaction", rebuttal: "Ask: \u2018Did you ever feel like losing your patience? How did you handle that?\u2019" }
 ];
 
-function renderQ1Table(){
-  const table = document.getElementById("q1RatingTable");
-  let rows = `<thead><tr><th style="width:34%">Category</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead><tbody>`;
-  Q1_CATEGORIES.forEach((cat, i) => {
-    let cells = "";
-    for(let star = 1; star <= 5; star++){
-      cells += `<td style="text-align:center;"><input type="radio" name="q1_${i}" value="${star}" onchange="updateQ1Average()"></td>`;
-    }
-    rows += `<tr><td class="crit-name">${cat.label}<div class="crit-def">1&ndash;2: ${cat.low}<br>3: ${cat.mid}<br>4&ndash;5: ${cat.high}</div></td>${cells}</tr>`;
+const PHONE_MATRIX_CRITERIA = [
+  { id: "prof_comm", name: "Professionalism & Communication", wt: 3,
+    levels: ["Casual, rambling, or hard to follow", "Some structure but noticeable gaps in clarity", "Organized and mostly clear throughout", "Polished, concise, no filler"] },
+  { id: "confidence", name: "Confidence & Poise", wt: 2,
+    levels: ["Hesitant, apologetic, low energy", "Some wavering but generally steady", "Composed with minor hesitation", "Assured and warm throughout"] },
+  { id: "greeting", name: "Call Greeting Execution", wt: 2,
+    levels: ["Skips company name, sounds scripted or flat", "States greeting but lacks warmth or confidence", "Clear, professional greeting with reasonable warmth", "Warm, confident, sounds natural and welcoming"] },
+  { id: "cust_service", name: "Customer Service Aptitude", wt: 3,
+    levels: ["Vague story, no clear resolution, or blames the customer", "Some structure but thin on specific actions taken", "Clear story with a real resolution and reasonable composure", "Specific, well-resolved example demonstrating patience and problem-solving"] },
+  { id: "readiness", name: "Overall Advancement Readiness", wt: 2,
+    levels: ["Would not recommend advancing", "Notable concerns, advance only with reservations", "Solid, reasonable candidate to advance", "Stands out, clear advance"] }
+];
+
+function renderPhoneMatrix(){
+  const table = document.getElementById("phoneMatrixTable");
+  let rows = `<thead><tr><th style="width:22%">Criterion</th><th>1 &mdash; Weak</th><th>2 &mdash; Developing</th><th>3 &mdash; Acceptable</th><th>4 &mdash; Strong</th><th style="width:5%">WT</th><th style="width:6%">Score</th></tr></thead><tbody>`;
+  PHONE_MATRIX_CRITERIA.forEach(c => {
+    let levelCells = c.levels.map((lv, i) => `<td><div class="score-options"><label><input type="radio" name="pcrit_${c.id}" value="${i+1}" onchange="updatePhoneMatrixScoring()">${lv}</label></div></td>`).join("");
+    rows += `<tr><td class="crit-name">${c.name}</td>${levelCells}<td class="wt">x${c.wt}</td><td class="rowscore" id="prowscore_${c.id}">&mdash;</td></tr>`;
   });
   rows += "</tbody>";
   table.innerHTML = rows;
+
+  const maxTotal = PHONE_MATRIX_CRITERIA.reduce((s, c) => s + c.wt, 0) * 4;
+  document.getElementById("phoneMaxTotal").textContent = maxTotal;
+
+  const bands = [
+    { label: "Do Not Hire", range: `0\u2013${Math.round(maxTotal*0.4375)}`, cls: "dnh" },
+    { label: "Conditional", range: `${Math.round(maxTotal*0.4375)+1}\u2013${Math.round(maxTotal*0.675)}`, cls: "cond" },
+    { label: "Strong", range: `${Math.round(maxTotal*0.675)+1}\u2013${Math.round(maxTotal*0.875)}`, cls: "strong" },
+    { label: "Elite", range: `${Math.round(maxTotal*0.875)+1}\u2013${maxTotal}`, cls: "elite" }
+  ];
+  document.getElementById("phoneBandsRef").innerHTML = bands.map(b => `<div>${b.label}<br><strong>${b.range}</strong></div>`).join("");
+
+  updatePhoneMatrixScoring();
 }
 
-function updateQ1Average(){
-  let total = 0, count = 0;
-  Q1_CATEGORIES.forEach((cat, i) => {
-    const checked = document.querySelector(`input[name="q1_${i}"]:checked`);
-    if(checked){ total += parseInt(checked.value, 10); count++; }
+function updatePhoneMatrixScoring(){
+  let rawTotal = 0, weightedTotal = 0, scoredCount = 0;
+  PHONE_MATRIX_CRITERIA.forEach(c => {
+    const checked = document.querySelector(`input[name="pcrit_${c.id}"]:checked`);
+    const rowEl = document.getElementById(`prowscore_${c.id}`);
+    if(checked){
+      const val = parseInt(checked.value, 10);
+      rawTotal += val;
+      weightedTotal += val * c.wt;
+      rowEl.textContent = val * c.wt;
+      scoredCount++;
+    } else {
+      rowEl.textContent = "\u2014";
+    }
   });
-  const avgEl = document.getElementById("q1Avg");
-  if(count === 0){
-    avgEl.textContent = "\u2014";
-  } else if(count < Q1_CATEGORIES.length){
-    avgEl.innerHTML = `${(total / count).toFixed(1)}<br><span style="font-size:10px; font-weight:normal; color:var(--red);">based on ${count} of ${Q1_CATEGORIES.length} rated \u2014 not final</span>`;
-  } else {
-    avgEl.textContent = (total / count).toFixed(1);
+  const maxTotal = PHONE_MATRIX_CRITERIA.reduce((s, c) => s + c.wt, 0) * 4;
+  document.getElementById("phoneRawTotal").textContent = rawTotal;
+  document.getElementById("phoneWeightedTotal").textContent = weightedTotal;
+  document.getElementById("phoneScoredCount").textContent = `${scoredCount} / ${PHONE_MATRIX_CRITERIA.length}`;
+
+  const banner = document.getElementById("phoneMatrixBanner");
+  if(scoredCount < PHONE_MATRIX_CRITERIA.length){
+    banner.className = "band-banner";
+    banner.textContent = `Score all ${PHONE_MATRIX_CRITERIA.length} criteria to generate a decision band. (${scoredCount} of ${PHONE_MATRIX_CRITERIA.length} complete)`;
+    return;
   }
-  updatePhoneScoreSummary();
+  const p = weightedTotal / maxTotal;
+  let cls, text;
+  if(p <= 0.4375){ cls = "dnh"; text = `Do Not Hire \u2014 ${weightedTotal} / ${maxTotal}`; }
+  else if(p <= 0.675){ cls = "cond"; text = `Conditional: Review Notes Before Advancing \u2014 ${weightedTotal} / ${maxTotal}`; }
+  else if(p <= 0.875){ cls = "strong"; text = `Strong: Recommend Advancing \u2014 ${weightedTotal} / ${maxTotal}`; }
+  else { cls = "elite"; text = `Elite: Fast-Track to Manager's In-Person Interview \u2014 ${weightedTotal} / ${maxTotal}`; }
+  banner.className = "band-banner " + cls;
+  banner.textContent = text;
+}
+
+function applyPhoneLinkedScore(radioGroupName, criterionId){
+  const tier = document.querySelector(`input[name="${radioGroupName}"]:checked`);
+  const msgId = radioGroupName === "q2Tier" ? "q2ApplyMsg" : "q3ApplyMsg";
+  const msg = document.getElementById(msgId);
+  if(!tier){
+    msg.style.color = "var(--red)";
+    msg.textContent = "Select Weak / Acceptable / Strong first.";
+    return;
+  }
+  const scoreMap = { weak: 1, accept: 3, strong: 4 };
+  const score = scoreMap[tier.value];
+  const radio = document.querySelector(`input[name="pcrit_${criterionId}"][value="${score}"]`);
+  if(radio){
+    radio.checked = true;
+    radio.dispatchEvent(new Event("change", { bubbles: true }));
+    msg.style.color = "var(--green)";
+    msg.textContent = `Applied \u2014 matrix now set to ${score}.`;
+  }
 }
 
 function renderPhoneChecklist(containerId, items, prefix){
@@ -2347,7 +2449,7 @@ function renderPhoneChecklist(containerId, items, prefix){
     wrap.className = "qb-item";
     wrap.innerHTML = `
       <div class="qb-item-head" onclick="togglePhoneRef('${prefix}', ${i})">
-        <input type="checkbox" id="${prefix}_${i}" onclick="event.stopPropagation(); updatePhoneScoreSummary();">
+        <input type="checkbox" id="${prefix}_${i}">
         <span class="qb-question">${item.label}</span>
         <span class="qb-toggle" id="${prefix}ToggleLabel_${i}">Show reference</span>
       </div>
@@ -2368,44 +2470,6 @@ function togglePhoneRef(prefix, i){
   const label = document.getElementById(`${prefix}ToggleLabel_${i}`);
   const showing = ref.classList.toggle("show");
   label.textContent = showing ? "Hide reference" : "Show reference";
-}
-
-function updatePhoneScoreSummary(){
-  const banner = document.getElementById("phoneScoreBanner");
-  if(!banner) return;
-
-  let q1Total = 0, q1Count = 0;
-  Q1_CATEGORIES.forEach((cat, i) => {
-    const checked = document.querySelector(`input[name="q1_${i}"]:checked`);
-    if(checked){ q1Total += parseInt(checked.value, 10); q1Count++; }
-  });
-  const q1Avg = q1Count ? q1Total / q1Count : null;
-
-  const q2Count = Q2_LISTEN_FOR.filter((_, i) => document.getElementById(`q2_${i}`).checked).length;
-  const q3Count = Q3_LISTEN_FOR.filter((_, i) => document.getElementById(`q3_${i}`).checked).length;
-
-  document.getElementById("phoneScoreQ1").textContent = q1Avg !== null ? q1Avg.toFixed(1) + " / 5" : "\u2014";
-  document.getElementById("phoneScoreQ2").textContent = `${q2Count} / ${Q2_LISTEN_FOR.length}`;
-  document.getElementById("phoneScoreQ3").textContent = `${q3Count} / ${Q3_LISTEN_FOR.length}`;
-
-  if(q1Count < Q1_CATEGORIES.length){
-    banner.className = "band-banner";
-    banner.textContent = `Rate all ${Q1_CATEGORIES.length} Q1 categories to see a suggested read. (${q1Count} of ${Q1_CATEGORIES.length} rated)`;
-    return;
-  }
-
-  const q2Ratio = q2Count / Q2_LISTEN_FOR.length;
-  const q3Ratio = q3Count / Q3_LISTEN_FOR.length;
-  const combined = (q1Avg / 5) * 0.5 + q2Ratio * 0.2 + q3Ratio * 0.3;
-
-  let cls, text;
-  if(combined >= 0.75){ cls = "elite"; text = "Strong candidate \u2014 recommend advancing to Manager's In-Person Interview"; }
-  else if(combined >= 0.55){ cls = "strong"; text = "Solid candidate \u2014 leans toward advancing, review notes before deciding"; }
-  else if(combined >= 0.4){ cls = "cond"; text = "Mixed signals \u2014 read the notes carefully before deciding"; }
-  else { cls = "dnh"; text = "Weak phone screen \u2014 leans toward Do Not Advance"; }
-
-  banner.className = "band-banner " + cls;
-  banner.textContent = text + " (this is a suggestion, not a rule \u2014 the recommendation dropdown below is your call)";
 }
 
 function handlePhonePositionChange(){
@@ -2440,7 +2504,8 @@ function checkPhoneCompleteness(){
   const missing = [];
   if(!phoneFullName()) missing.push("Candidate Name");
   if(!phoneEffectivePosition()) missing.push("Position Applied For");
-  if(!document.querySelector('input[name="q1_0"]:checked')) missing.push("Question 1 ratings incomplete");
+  const scoredCount = PHONE_MATRIX_CRITERIA.filter(c => document.querySelector(`input[name="pcrit_${c.id}"]:checked`)).length;
+  if(scoredCount < PHONE_MATRIX_CRITERIA.length) missing.push(`Scoring Matrix (${scoredCount} of ${PHONE_MATRIX_CRITERIA.length} done)`);
   if(!document.getElementById("pRecommendation").value) missing.push("Recommendation");
   const statusEl = document.getElementById("phoneStatusMsg");
   if(missing.length === 0){
@@ -2454,14 +2519,17 @@ function checkPhoneCompleteness(){
 
 function buildPhonePayload(){
   const val = id => (document.getElementById(id) ? document.getElementById(id).value : "");
-  let q1Total = 0, q1Count = 0;
-  const q1Lines = [];
-  Q1_CATEGORIES.forEach((cat, i) => {
-    const checked = document.querySelector(`input[name="q1_${i}"]:checked`);
-    const v = checked ? checked.value : "";
-    if(checked){ q1Total += parseInt(v, 10); q1Count++; }
-    q1Lines.push(`${cat.label}: ${v || "n/a"}`);
+  let rawTotal = 0, weightedTotal = 0, scoredCount = 0;
+  const matrixLines = [];
+  PHONE_MATRIX_CRITERIA.forEach(c => {
+    const checked = document.querySelector(`input[name="pcrit_${c.id}"]:checked`);
+    const v = checked ? parseInt(checked.value, 10) : null;
+    if(checked){ rawTotal += v; weightedTotal += v * c.wt; scoredCount++; }
+    matrixLines.push(`${c.name}: ${v !== null ? v : "n/a"}`);
   });
+  const maxTotal = PHONE_MATRIX_CRITERIA.reduce((s, c) => s + c.wt, 0) * 4;
+  const decisionBand = document.getElementById("phoneMatrixBanner") ? document.getElementById("phoneMatrixBanner").textContent : "";
+
   const q2Checked = Q2_LISTEN_FOR.filter((item, i) => document.getElementById(`q2_${i}`).checked).map(item => item.label);
   const q3Checked = Q3_LISTEN_FOR.filter((item, i) => document.getElementById(`q3_${i}`).checked).map(item => item.label);
 
@@ -2476,8 +2544,11 @@ function buildPhonePayload(){
     source: val("pSource"),
     callDate: val("pCallDate"),
     interviewer: val("pInterviewer"),
-    q1Ratings: q1Lines.join(" | "),
-    q1Average: q1Count ? (q1Total / q1Count).toFixed(1) : "",
+    matrixRatings: matrixLines.join(" | "),
+    rawTotal: rawTotal,
+    weightedTotal: weightedTotal,
+    maxTotal: maxTotal,
+    decisionBand: decisionBand,
     q1Notes: val("q1Notes"),
     q2Checked: q2Checked.join(" | ") || "None checked",
     q2Notes: val("q2Notes"),
@@ -2496,10 +2567,11 @@ function copyPhoneSummary(){
     `Candidate: ${p.candidateName}   Position: ${p.position}   Tracking #: ${p.trackingNumber}`,
     `Call Date: ${p.callDate}   Interviewer: ${p.interviewer}`,
     "",
-    "Q1 - Introduction & Interest",
-    `  Ratings: ${p.q1Ratings}`,
-    `  Average: ${p.q1Average || "n/a"} / 5`,
-    `  Notes: ${p.q1Notes || "(none)"}`,
+    "Phone Screening Scoring Matrix",
+    `  Ratings: ${p.matrixRatings}`,
+    `  Weighted Total: ${p.weightedTotal} / ${p.maxTotal}`,
+    `  Decision Band: ${p.decisionBand || "n/a"}`,
+    `  Q1 Notes: ${p.q1Notes || "(none)"}`,
     "",
     "Q2 - Call Greeting Scenario",
     `  Observed: ${p.q2Checked}`,
@@ -2588,8 +2660,9 @@ renderPredictor();
 renderDisc();
 renderQuestionBank();
 generateTrackingNumber();
-renderQ1Table();
+renderPhoneMatrix();
 renderFinalScoreTable();
+updateStageGating();
 renderPhoneChecklist("q2Checklist", Q2_LISTEN_FOR, "q2");
 renderPhoneChecklist("q3Checklist", Q3_LISTEN_FOR, "q3");
 generatePhoneTrackingNumber();
